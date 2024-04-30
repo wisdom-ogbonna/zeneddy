@@ -17,7 +17,7 @@ use App\Http\Controllers\Saas\Admin\TestimonialController;
 use App\Http\Controllers\Saas\FrontendController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => ['version.update', 'addon.update', 'isFrontend']], function () {
+// Route::group(['middleware' => ['version.update', 'addon.update', 'isFrontend']], function () {
     // register owner
     Route::get('owner-register', [OwnerAuthController::class, 'owner_register_form'])->name('owner.register.form');
     Route::post('owner-register', [OwnerAuthController::class, 'owner_register_store'])->name('owner.register.store');
@@ -29,7 +29,7 @@ Route::group(['middleware' => ['version.update', 'addon.update', 'isFrontend']],
 
     // contact
     Route::post('contact-message-store', [FrontendController::class, 'contactMessageStore'])->name('contact.message.store');
-});
+// });
 
 Route::group(['prefix' => 'payment'], function () {
     Route::post('/subscription', [PaymentSubscriptionController::class, 'checkout'])->name('payment.subscription.checkout');

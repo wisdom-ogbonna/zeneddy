@@ -40,10 +40,10 @@
             <div class="dropdown d-inline-block">
                 <button type="button" class="header-item noti-icon" id="page-header-languages-dropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="{{ asset(selectedLanguage()->icon) }}" alt="{{ selectedLanguage()->name ?? 'English' }}"
-                        title="{{ selectedLanguage()->name ?? 'English' }}" class="rounded-circle avatar-xs fit-image">
+                    <img src="{{ asset(optional(selectedLanguage())->icon) }}" alt="{{ optional(selectedLanguage())->name ?? 'English' }}"
+                        title="{{ optional(selectedLanguage())->name ?? 'English' }}" class="rounded-circle avatar-xs fit-image">
                 </button>
-                <div class="dropdown-menu {{ selectedLanguage()->rtl == 1 ? 'dropdown-menu-start' : 'dropdown-menu-end' }}"
+                <div class="dropdown-menu {{ optional(selectedLanguage())->rtl == 1 ? 'dropdown-menu-start' : 'dropdown-menu-end' }}"
                     aria-labelledby="page-header-languages-dropdown">
                     <div>
                         @foreach (languages() as $language)
@@ -66,7 +66,7 @@
                     <i class="ri-notification-2-fill"></i>
                     <span class="noti-dot pulse"></span>
                 </button>
-                <div class="dropdown-menu dropdown-menu-lg {{ selectedLanguage()->rtl == 1 ? 'dropdown-menu-start' : 'dropdown-menu-end' }} p-0"
+                <div class="dropdown-menu dropdown-menu-lg {{ optional(selectedLanguage())->rtl == 1 ? 'dropdown-menu-start' : 'dropdown-menu-end' }} p-0"
                     aria-labelledby="page-header-notifications-dropdown">
                     <div class="p-3">
                         <div class="row align-items-center">
@@ -116,7 +116,7 @@
                     <span class="d-none d-xl-inline-block ms-1 font-medium">{{ auth()->user()->name }}</span>
                     <i class="mdi mdi-chevron-down d-xl-inline-block"></i>
                 </button>
-                <div class="dropdown-menu {{ selectedLanguage()->rtl == 1 ? 'dropdown-menu-start' : 'dropdown-menu-end' }}"
+                <div class="dropdown-menu {{ optional(selectedLanguage())->rtl == 1 ? 'dropdown-menu-start' : 'dropdown-menu-end' }}"
                     aria-labelledby="page-header-user-dropdown">
                     <!-- item-->
                     <a class="dropdown-item" href="{{ route('profile') }}"><i

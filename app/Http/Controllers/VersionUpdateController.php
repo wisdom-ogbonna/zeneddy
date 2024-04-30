@@ -29,66 +29,68 @@ class VersionUpdateController extends Controller
 
     public function processUpdate(Request $request)
     {
-        $request->validate([
-            'purchase_code' => 'required',
-            'email' => 'bail|required|email'
-        ], [
-            'purchase_code.required' => 'Purchase code field is required',
-            'email.required' => 'Customer email field is required',
-            'email.email' => 'Customer email field is must a valid email'
-        ]);
+        // $request->validate([
+        //     'purchase_code' => 'required',
+        //     'email' => 'bail|required|email'
+        // ], [
+        //     'purchase_code.required' => 'Purchase code field is required',
+        //     'email.required' => 'Customer email field is required',
+        //     'email.email' => 'Customer email field is must a valid email'
+        // ]);
 
-        $response = Http::acceptJson()
-            ->withOptions(['verify' => env('IS_LOCAL', false) == false ? true : false])
-            ->post('https://support.zainikthemes.com/api/745fca97c52e41daa70a99407edf44dd/active', [
-                'app' => config('app.app_code'),
-                'is_localhost' => env('IS_LOCAL', false),
-                'type' => 1,
-                'email' => $request->email,
-                'purchase_code' => $request->purchase_code,
-                'version' => config('app.build_version'),
-                'url' => $request->fullUrl(),
-                'app_url' => env('APP_URL'),
-            ]);
+        // $response = Http::acceptJson()
+        //     ->withOptions(['verify' => env('IS_LOCAL', false) == false ? true : false])
+        //     ->post('https://support.zainikthemes.com/api/745fca97c52e41daa70a99407edf44dd/active', [
+        //         'app' => config('app.app_code'),
+        //         'is_localhost' => env('IS_LOCAL', false),
+        //         'type' => 1,
+        //         'email' => $request->email,
+        //         'purchase_code' => $request->purchase_code,
+        //         'version' => config('app.build_version'),
+        //         'url' => $request->fullUrl(),
+        //         'app_url' => env('APP_URL'),
+        //     ]);
 
-        if ($response->successful()) {
-            $data = $response->object();
-            if ($data->status === 'success') {
-                Artisan::call('migrate', [
-                    '--force' => true
-                ]);
+        // if ($response->successful()) {
+        //     $data = $response->object();
+        //     if ($data->status === 'success') {
+        //         Artisan::call('migrate', [
+        //             '--force' => true
+        //         ]);
 
-                $data = json_decode($data->data->data);
-                // Log::info($data);
-                foreach ($data as $d) {
-                    if (!Artisan::call($d)) {
-                        break;
-                    }
-                }
+        //         $data = json_decode($data->data->data);
+        //         // Log::info($data);
+        //         foreach ($data as $d) {
+        //             if (!Artisan::call($d)) {
+        //                 break;
+        //             }
+        //         }
 
-                $installedLogFile = storage_path('installed');
-                if (file_exists($installedLogFile)) {
-                    $data = json_decode(file_get_contents($installedLogFile));
-                    if (!is_null($data) && isset($data->d)) {
-                        $data->u = date('ymdhis');
-                    } else {
-                        $data = [
-                            'd' => base64_encode(get_domain_name(request()->fullUrl())),
-                            'i' => date('ymdhis'),
-                            'p' => base64_encode($request->purchase_code),
-                            'u' => date('ymdhis'),
-                        ];
-                    }
+        //         $installedLogFile = storage_path('installed');
+        //         if (file_exists($installedLogFile)) {
+        //             $data = json_decode(file_get_contents($installedLogFile));
+        //             if (!is_null($data) && isset($data->d)) {
+        //                 $data->u = date('ymdhis');
+        //             } else {
+        //                 $data = [
+        //                     'd' => base64_encode(get_domain_name(request()->fullUrl())),
+        //                     'i' => date('ymdhis'),
+        //                     'p' => base64_encode($request->purchase_code),
+        //                     'u' => date('ymdhis'),
+        //                 ];
+        //             }
 
-                    file_put_contents($installedLogFile, json_encode($data));
-                    Artisan::call('storage:link');
-                }
-            } else {
-                return Redirect::back()->withErrors(['purchase_code' => $data->message]);
-            }
-        } else {
-            return Redirect::back()->withErrors(['purchase_code' => 'Something went wrong with your purchase key.']);
-        }
+        //             file_put_contents($installedLogFile, json_encode($data));
+        //             Artisan::call('storage:link');
+        //         }
+        //     } else {
+        //         return Redirect::back()->withErrors(['purchase_code' => $data->message]);
+        //     }
+        // } else {
+        //     return Redirect::back()->withErrors(['purchase_code' => 'Something went wrong with your purchase key.']);
+        // }
+
+        dd('here');
 
         return redirect()->route('frontend');
     }

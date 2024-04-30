@@ -30,7 +30,8 @@
     @stack('style')
 </head>
 
-<body class="{{ selectedLanguage()->rtl == 1 ? 'direction-rtl' : 'direction-ltr' }}">
+<body class="{{ optional(selectedLanguage())->rtl == 1 ? 'direction-rtl' : 'direction-ltr' }}"
+    >
 
     @if (getOption('app_preloader_status') == 1)
         <div id="preloader">

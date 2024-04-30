@@ -34,7 +34,7 @@
 <link href="{{ asset('assets/css/extra-style.css') }}" rel="stylesheet">
 
 <!-- RTL Style Start -->
-@if (selectedLanguage()->rtl == 1)
+@if (optional(selectedLanguage())->rtl == 1)
     <link href="{{ asset('assets/css/rtl-style.css') }}" rel="stylesheet">
 @endif
 <!-- RTL Style End -->

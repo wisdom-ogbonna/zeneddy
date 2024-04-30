@@ -24,46 +24,21 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapWebRoutes()
-    {
-        foreach ($this->centralDomains() as $domain) {
-            Route::middleware('web')
-                ->domain($domain)
-                ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
-        }
-    }
 
-    protected function mapApiRoutes()
-    {
-        foreach ($this->centralDomains() as $domain) {
-            Route::prefix('api')
-                ->domain($domain)
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
-        }
-    }
 
-    protected function centralDomains(): array
+    public function boot(): void
     {
-        return config('tenancy.central_domains');
-    }
-
-    public function boot()
-    {
-        $this->configureRateLimiting();
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
 
         $this->routes(function () {
+            //  Route::middleware('api')
+            //      ->prefix('api')
+            //      ->group(base_path('routes/api.php'));
 
-            if (isAddonInstalled('PROTYTENANCY') > 0) {
-                $this->mapApiRoutes();
-                $this->mapWebRoutes();
-            }
-
-            Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
+            //  Route::middleware('web')
+            //      ->group(base_path('routes/web.php'));
 
 
             Route::middleware('api')
@@ -79,52 +54,137 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/api/tenant.php'));
 
 
-            Route::middleware(['web', 'common'])
+            Route::middleware(['web'])
                 ->group(base_path('routes/web.php'));
 
-            Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+            Route::middleware(['web'])
                 ->group(base_path('routes/admin.php'));
 
-            if (isAddonInstalled('PROTYSAAS') > 1) {
-                Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
-                    ->group(base_path('routes/saas.php'));
-            }
-
-            if (isAddonInstalled('PROTYSMS') > 0) {
-                Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
-                    ->group(base_path('routes/bulk-sms-mail.php'));
-            }
-
-            if (isAddonInstalled('PROTYAGREEMENT') > 0) {
-                Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
-                    ->group(base_path('routes/agreement.php'));
-            }
-
-            if (isAddonInstalled('PROTYLISTING') > 0) {
-                Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
-                    ->group(base_path('routes/listing.php'));
-            }
-
-            Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+            Route::middleware(['web'])
                 ->group(base_path('routes/owner.php'));
 
-            Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+            Route::middleware(['web'])
                 ->group(base_path('routes/tenant.php'));
 
-            Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+            Route::middleware(['web'])
                 ->group(base_path('routes/maintainer.php'));
+
+
+                Route::middleware(['web'])
+                    ->group(base_path('routes/saas.php'));
+
+                Route::middleware(['web'])
+                    ->group(base_path('routes/bulk-sms-mail.php'));
+
+                Route::middleware(['web'])
+                    ->group(base_path('routes/agreement.php'));
+
+                Route::middleware(['web'])
+                    ->group(base_path('routes/listing.php'));
         });
     }
 
-    /**
-     * Configure the rate limiters for the application.
-     *
-     * @return void
-     */
-    protected function configureRateLimiting()
-    {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
-    }
+    // protected function mapWebRoutes()
+    // {
+    //     foreach ($this->centralDomains() as $domain) {
+    //         Route::middleware('web')
+    //             ->domain($domain)
+    //             ->namespace($this->namespace)
+    //             ->group(base_path('routes/web.php'));
+    //     }
+    // }
+
+    // protected function mapApiRoutes()
+    // {
+    //     foreach ($this->centralDomains() as $domain) {
+    //         Route::prefix('api')
+    //             ->domain($domain)
+    //             ->middleware('api')
+    //             ->namespace($this->namespace)
+    //             ->group(base_path('routes/api.php'));
+    //     }
+    // }
+
+    // protected function centralDomains(): array
+    // {
+    //     return config('tenancy.central_domains');
+    // }
+
+    // public function boot()
+    // {
+    //     $this->configureRateLimiting();
+
+    //     $this->routes(function () {
+
+    //         if (isAddonInstalled('PROTYTENANCY') > 0) {
+    //             $this->mapApiRoutes();
+    //             $this->mapWebRoutes();
+    //         }
+
+    //         Route::middleware('api')
+    //             ->prefix('api')
+    //             ->group(base_path('routes/api.php'));
+
+
+    //         Route::middleware('api')
+    //             ->prefix('api')
+    //             ->group(base_path('routes/api/owner.php'));
+
+    //         Route::middleware('api')
+    //             ->prefix('api')
+    //             ->group(base_path('routes/api/maintainer.php'));
+
+    //         Route::middleware('api')
+    //             ->prefix('api')
+    //             ->group(base_path('routes/api/tenant.php'));
+
+
+    //         Route::middleware(['web', 'common'])
+    //             ->group(base_path('routes/web.php'));
+
+    //         Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //             ->group(base_path('routes/admin.php'));
+
+    //         if (isAddonInstalled('PROTYSAAS') > 1) {
+    //             Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //                 ->group(base_path('routes/saas.php'));
+    //         }
+
+    //         if (isAddonInstalled('PROTYSMS') > 0) {
+    //             Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //                 ->group(base_path('routes/bulk-sms-mail.php'));
+    //         }
+
+    //         if (isAddonInstalled('PROTYAGREEMENT') > 0) {
+    //             Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //                 ->group(base_path('routes/agreement.php'));
+    //         }
+
+    //         if (isAddonInstalled('PROTYLISTING') > 0) {
+    //             Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //                 ->group(base_path('routes/listing.php'));
+    //         }
+
+    //         Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //             ->group(base_path('routes/owner.php'));
+
+    //         Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //             ->group(base_path('routes/tenant.php'));
+
+    //         Route::middleware(['web', 'tenancy', 'common', 'version.update', 'addon.update'])
+    //             ->group(base_path('routes/maintainer.php'));
+    //     });
+    // }
+
+    // /**
+    //  * Configure the rate limiters for the application.
+    //  *
+    //  * @return void
+    //  */
+    // protected function configureRateLimiting()
+    // {
+    //     RateLimiter::for('api', function (Request $request) {
+    //         return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+    //     });
+    // }
 }

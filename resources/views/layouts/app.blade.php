@@ -48,7 +48,7 @@
     <link href="{{ asset('/') }}assets/css/extra-style.css" rel="stylesheet">
 
     <!-- RTL Style Start -->
-    @if (selectedLanguage()->rtl == 1)
+    @if (optional(selectedLanguage())->rtl == 1)
         <link href="{{ asset('/') }}assets/css/rtl-style.css" rel="stylesheet">
     @endif
     <!-- RTL Style End -->
@@ -78,7 +78,7 @@
     </style>
 </head>
 
-<body class="{{ selectedLanguage()->rtl == 1 ? 'direction-rtl' : 'direction-ltr' }}">
+<body class="{{ optional(selectedLanguage())->rtl == 1 ? 'direction-rtl' : 'direction-ltr' }}">
     @if (getOption('app_preloader_status') == 1)
         <div id="preloader">
             <div id="preloaderInner"><img src="{{ getSettingImage('app_preloader') }}" alt="img"></div>

@@ -41,12 +41,12 @@ Route::get('/local/{ln}', function ($ln) {
     return redirect()->back();
 })->name('local');
 
-Route::group(['middleware' => ['version.update', 'addon.update', 'isFrontend']], function () {
+// Route::group(['middleware' => ['addon.update', 'isFrontend']], function () {
     Route::get('/', [CommonController::class, 'index'])->name('frontend');
     Route::get('recurring-generate-invoice', [CommonController::class, 'generateInvoice'])->name('recurring.generate.invoice');
-});
+// });
 
-Route::group(['middleware' => ['auth', 'version.update']], function () {
+Route::group(['middleware' => ['auth' ]], function () {
     Route::get('/logout', [LoginController::class, 'logout']);
     Route::group(['middleware' => ['addon.update']], function () {
         Route::get('profile', [ProfileController::class, 'myProfile'])->name('profile');
